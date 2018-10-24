@@ -11,8 +11,9 @@
 </head>
 
 <body>
+    <!-- 父子组件的方法传递 -->
     <div id="app">
-        <cmt-box></cmt-box>
+        <cmt-box @func123="loadComments"></cmt-box>
 
         <ul class="list-group">
             <li class="list-group-item" v-for="item in list" :key="item.id">
@@ -21,6 +22,8 @@
             </li>
         </ul>
     </div>
+
+
     <template id='tmp1'>
         <div>
             <div class="form-group">
@@ -34,20 +37,35 @@
             <input type="button" value="Comment" class="btn btn-primary" @click="postComment">
         </div>
     </template>
+
+
     <script>
+        //在vue中定义为组件components
         var commentBox = {
-            data() {
+            template: '#tmp1',
+            data() { //组件中的data
                 return {
                     user: '',
                     content: ''
                 }
             },
             methods: {
-                postComment(){
+                postComment() {
                     //localStorage: JSON.stringfy
+                    var comment = {
+                        id: Date.now(),
+                        user: this.user,
+                        content: this.content
+                    }
+                    var list = JSON.parse(localStorage.getItem('cmts') || '[]')
+                    list.unshift(comment)
+                    //保存最新的评论数据
+                    localStorage.setItem('cmts', JSON.stringify(list))
+                    this.user = this.content = ''
+                    //调用父组件的方法
+                    this.$emit('func123')
                 }
-            },
-            template: '#tmp1'
+            }
         }
 
         var vm = new Vue({
@@ -58,20 +76,32 @@
             data: {
                 list: [{
                         id: Date.now(),
-                        user: 'aaa',
-                        content: 'aaaaaaaaaaaaaaaaaaaaaaaaa'
+                        user: '李白',
+                        content: '天生我材必有用'
                     },
                     {
                         id: Date.now(),
-                        user: 'bbb',
-                        content: 'bbbbbbbbbbbbbbbbbbbbbbbbb'
+                        user: '杜甫',
+                        content: '安得廣廈千萬間'
                     },
                     {
                         id: Date.now(),
-                        user: 'ccc',
-                        content: 'ccccccccccccccccccccccccc'
+                        user: '惟高',
+                        content: '天下熙熙皆为利来'
                     },
                 ]
+            },
+            beforeCreate() { //这里不能调用loadComments, 此时还未初始化data methods
+
+            },
+            created() {
+                this.loadComments()
+            },
+            methods: {
+                loadComments() {
+                    var list = JSON.parse(localStorage.getItem('cmts') || '[]')
+                    this.list = list
+                }
             }
         })
     </script>

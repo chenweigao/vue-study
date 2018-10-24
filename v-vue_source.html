@@ -8,35 +8,85 @@
     <title>Document</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17-beta.0/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <!-- after it 在后面导入 因为有依赖关系 this.$http.jsonp -->
 </head>
 
 <body>
-    <div id="app">
+    <div id="app" style="max-height: 50em; overflow-y: scroll">
         <input type="button" value="Get request" @click="getInfo">
         <input type="button" value="Post request" @click="postInfo">
-        <div v-for="path in pathlist">
-            <p v-for="node in path">
-                {{ node.time }}
-            </p>
-        </div>
+
+        <table class="table table-{1:striped|sm|bordered|hover|inverse} table-inverse table-responsive">
+            <thead class="thead-inverse|thead-default">
+                <tr>
+                    <th>X </th>
+                    <th>Y</th>
+                    <th>Ctime</th>
+                    <th>Operation</th>
+                </tr>
+            </thead>
+            <tbody v-for="path in pathlist">
+                <tr v-for="node in path">
+                    <td>{{ node.x }}</td>
+                    <td>{{ node.y }}</td>
+                    <td>{{ node.time | dateFormat() }}</td>
+                    <td>
+                        <!-- <a href="" @click.prevent="del(item.id)">Delete</a> -->
+                        <input type="button" value="Delete" class="btn btn-primary" @click.prevent="del(item.id)">
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+                    <tr v-for="node in path">
+                        <td>{{ node.x }}</td>
+                        <td>{{ node.y }}</td>
+                        <td>{{ node.time | dateFormat() }}</td>
+                        <td>
+                            <!-- <a href="" @click.prevent="del(item.id)">Delete</a> -->
+                            <input type="button" value="Delete" class="btn btn-primary" @click.prevent="del(item.id)">
+                        </td>
+                    </tr>
+                </tbody>
+        </table>
     </div>
 
     <script>
+        Vue.filter('dateFormat', function (dateStr, pattern = "") {
+            var dt = new Date(dateStr)
+            var y = dt.getFullYear()
+            var m = (dt.getMonth() + 1).toString().padStart(2, '0')
+            //填充为2位，以0填充
+            var d = dt.getDate().toString().padStart(2, '0')
+
+            if (pattern.toLowerCase() == 'yyyy-mm-dd') {
+                return `${y}-${m}-${d}`
+            } else {
+                var hh = dt.getHours().toString().padStart(2, '0')
+                var mm = dt.getMinutes().toString().padStart(2, '0')
+                var ss = dt.getSeconds().toString().padStart(2, '0')
+                return `${y}-${m}-${d} ${hh}:${mm}:${ss}`
+            }
+        })
         var vm = new Vue({
             el: '#app',
             data: {
-                pathlist:[[]]
+                pathlist: null,
+                path: []
             },
             methods: {
                 getInfo() { // get request
-                    var self=this;
-                    this.$http.get('http://127.0.0.1:9527/path.json').then(function (result) {
-                        self.pathlist = result.body;
+                    var self = this
+                    this.$http.get('http://118.24.241.17:8088/path.json').then(function (result) {
+                        self.pathlist = result.data
+                        for(let i = 0; i < self.pathlist.length; i++){
+                            self.path.push(self.pathlist[i][0])
+                            console.log(self.path);
+                        }
                     })
                 },
                 postInfo() {
-                    this.$http.post('https://jsonplaceholder.typicode.com/users', {}, {}).then(result=> {
+                    this.$http.post('https://jsonplaceholder.typicode.com/users', {}, {}).then(result => {
                         console.log(result)
                     })
                 }
