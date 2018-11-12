@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17-beta.0/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+
+    </div>
+    <script>
+        var apiURL = 'https://api.github.com/repos/chenweigao/vueblog/commits?per_page=3&sha='
+        var demo = new Vue({
+            el: '#demo',
+            data: {
+                branches: ['master', 'dev'],
+                currentBranch: 'master',
+                commits: null
+            },
+            created() {
+                this.fetchData()
+            },
+            // created 使用 function 和不使用 的区别在于何处？
+            watch: {
+                currentBranch: 'fetchData'
+            },
+            filters: {
+                truncate: function(v) {
+
+                }
+            }
+            methods: {
+
+            }
+        })
+    </script>
+</body>
+
+</html>
