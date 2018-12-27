@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17-beta.0/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <p>
+            My name is <input v-model="name">
+            and I am <input v-model="age"> 
+            years old.
+            Person is: <input type="text" v-model="person">
+        </p>
+        <p>
+            <button @click="persist">Save</button>
+        </p>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                name: '',
+                age: 0,
+                person: ''
+            },
+            mounted() {
+                if (localStorage.name) {
+                    this.name = localStorage.name
+                }
+                if(localStorage.age) {
+                    this.age = localStorage.age
+                }
+            },
+            watch: {
+                'name': function(newVal, oldVal) {
+                    // this.person = this.name + ':' + this.age
+                    this.person = newVal + ':' + this.age
+                },
+                'age': function(newVal) {
+                    this.person = this.name + ':' + newVal
+                }
+            },
+            methods: {
+                persist() {
+                    localStorage.name = this.name
+                    localStorage.age = this.age
+                    console.log('now I pretend I did more stuff...');
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
