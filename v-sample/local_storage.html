@@ -12,10 +12,9 @@
 <body>
     <div id="app">
         <p>
-            My name is <input v-model="name">
-            and I am <input v-model="age"> 
-            years old.
-            Person is: <input type="text" v-model="person">
+            <input v-model="name" placeholder="name">
+            <input v-model="age" placeholder="age"> 
+            <input type="text" v-model="person" placeholder="name:age">
         </p>
         <p>
             <button @click="persist">Save</button>
